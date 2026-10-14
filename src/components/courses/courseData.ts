@@ -1,0 +1,6 @@
+import { CourseType } from "@/types/CourseType";
+
+export const coursesData: CourseType[] = [
+  { _id: "course-imucet-complete", title: "Complete IMUCET Preparation", shortDescription: "A structured preparation path for every stage of your IMUCET journey.", thumbnail: "/images/logo.jpg", instructor: { name: "Future Mariners Academic Team" }, totalLearners: 0, isCertificationProvide: false, price: 5999, discountPrice: 5999, status: "Ongoing", slug: { current: "complete-imucet-preparation" }, level: "All IMUCET aspirants", overview: [], duration: 0, lessonsCount: 0 },
+  { _id: "course-imucet-interview", title: "IMUCET Interview Preparation", shortDescription: "Build calm, confident answers with guided interview practice and feedback.", thumbnail: "/images/logo.jpg", instructor: { name: "Future Mariners Academic Team" }, totalLearners: 0, isCertificationProvide: false, price: 2999, discountPrice: 2999, status: "Ongoing", slug: { current: "imucet-interview-preparation" }, level: "All IMUCET aspirants", overview: [], duration: 0, lessonsCount: 0 },
+];

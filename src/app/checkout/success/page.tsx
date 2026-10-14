@@ -1,0 +1,5 @@
+import Link from "next/link";
+
+const CheckoutSuccessPage = () => <main className="min-h-[calc(100vh-80px)] bg-[#f3f6f8] py-20"><div className="container max-w-xl"><div className="bg-white p-10 text-center shadow-[0_18px_50px_rgba(16,44,99,0.09)]"><div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#e8f2ed] text-2xl text-[#27734c]">✓</div><h1 className="mt-6 font-mulish text-4xl font-bold text-[#102c63]">Payment received.</h1><p className="mt-4 leading-7 text-[#526176]">Your enrollment is being confirmed. Return to your dashboard to access your course.</p><Link href="/dashboard" className="mt-8 inline-flex rounded-full bg-[#7D52F4] px-6 py-3 font-bold text-white hover:bg-purple-600">Go to dashboard →</Link></div></div></main>;
+
+export default CheckoutSuccessPage;
