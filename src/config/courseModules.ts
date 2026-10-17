@@ -12,7 +12,7 @@ export const courseModules: Record<string, CourseModule[]> = {
     { collectionId: "e6468c7d-af6d-42eb-a013-73868cf9d91b", title: "Module 4: MATHS IMUCET" },
     { collectionId: "e1c4f3d7-02b0-4daf-99f1-fd48c1bb09a7", title: "Module 5: PHYSICS IMUCET" },
     
-    { collectionId: "cef74b65-e697-4e78-b1aa-9f2589275978", title: "Module 6: PHYSICS IMUCET" },
+    { collectionId: "cef74b65-e697-4e78-b1aa-9f2589275978", title: "Module 6: GENERAL KNOWLEDGE IMUCET" },
 
   ],
   "imucet-interview-preparation": [
