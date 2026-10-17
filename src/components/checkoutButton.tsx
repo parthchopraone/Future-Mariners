@@ -4,7 +4,7 @@ import { useState } from "react";
 
 declare global { interface Window { Razorpay: new (options: Record<string, unknown>) => { open: () => void; on: (event: string, handler: () => void) => void }; } }
 
-const CheckoutButton = ({ courseSlug }: { courseSlug: string }) => {
+const CheckoutButton = ({ courseSlug, upgrade = false }: { courseSlug: string; upgrade?: boolean }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -14,7 +14,7 @@ const CheckoutButton = ({ courseSlug }: { courseSlug: string }) => {
     let response: Response;
     let data: { url?: string; orderId?: string; amount?: number; currency?: string; keyId?: string; name?: string; email?: string; error?: string };
     try {
-      response = await fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ courseSlug }) });
+      response = await fetch("/api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ courseSlug, upgrade }) });
       data = await response.json();
     } catch {
       setError("Unable to connect to checkout. Please try again.");

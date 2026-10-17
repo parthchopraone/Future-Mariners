@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   const payment = event.payload?.payment?.entity;
   if (event.event === "payment.captured" && payment?.order_id && payment.id && payment.status === "captured") {
     const enrollment = await prisma.enrollment.findFirst({ where: { razorpayOrderId: payment.order_id }, include: { course: true } });
-    const expectedAmount = enrollment ? enrollment.course.price * 100 : 0;
+    const expectedAmount = enrollment ? (enrollment.paymentAmount ?? enrollment.course.price) * 100 : 0;
     if (enrollment && payment.amount === expectedAmount && payment.currency === "INR") {
       await prisma.enrollment.updateMany({ where: { id: enrollment.id, status: { not: "PAID" } }, data: { status: "PAID", razorpayPaymentId: payment.id } });
     }

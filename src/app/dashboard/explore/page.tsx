@@ -37,7 +37,7 @@ const ExplorePage = async () => {
                 <h2 className="mt-4 font-mulish text-2xl font-bold leading-tight">{course.title}</h2>
                 <p className="mt-4 min-h-14 leading-7 text-[#526176]">{course.shortDescription}</p>
                 <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[#e5eaf0] pt-6">
-                  <p className="font-mulish text-2xl font-bold">₹{course.price.toLocaleString("en-IN")} <span className="text-sm font-normal text-[#718096]">one-time</span></p>
+                  <p className="font-mulish text-2xl font-bold">₹{(isUpgrade && course.slug.current === "complete-imucet-preparation" ? 2600 : course.price).toLocaleString("en-IN")} <span className="text-sm font-normal text-[#718096]">{isUpgrade ? "upgrade price" : "one-time"}</span></p>
                   <Link href={`/courses/${course.slug.current}`} className="inline-flex items-center rounded-md bg-[#102c63] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#273b58]">{isUpgrade ? "Upgrade now" : "View course"} <span className="ml-3 text-[#e4aa3b]">→</span></Link>
                 </div>
               </article>

@@ -1,0 +1,1 @@
+ALTER TABLE "Enrollment" ADD COLUMN "paymentAmount" INTEGER;

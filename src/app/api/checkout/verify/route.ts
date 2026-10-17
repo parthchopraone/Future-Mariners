@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     if (expected.length !== received.length || !crypto.timingSafeEqual(expected, received)) return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
     const razorpay = getRazorpay();
     const [order, payment] = await Promise.all([razorpay.orders.fetch(orderId), razorpay.payments.fetch(paymentId)]);
-    const expectedAmount = enrollment.course.price * 100;
+    const expectedAmount = (enrollment.paymentAmount ?? enrollment.course.price) * 100;
     if (order.id !== orderId || order.amount !== expectedAmount || order.currency !== "INR" || payment.order_id !== orderId || payment.amount !== expectedAmount || payment.currency !== "INR" || payment.status !== "captured") return NextResponse.json({ error: "Payment details could not be verified." }, { status: 400 });
     await prisma.enrollment.updateMany({ where: { id: enrollment.id, status: { not: "PAID" } }, data: { status: "PAID", razorpayPaymentId: paymentId } });
     return NextResponse.json({ ok: true });

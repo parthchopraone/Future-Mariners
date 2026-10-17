@@ -2,10 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { Instagram, WhatsApp } from "@/lib/icons";
 
 const Footer = async () => {
   const session = await getServerSession(authOptions);
   const isAuthenticated = Boolean(session?.user?.id);
+  const whatsappUrl = process.env.NEXT_PUBLIC_WHATSAPP_URL ?? "/contact";
+  const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "https://www.instagram.com/";
 
   return (
   <footer className="bg-[#0b214b] text-white">
@@ -14,6 +17,7 @@ const Footer = async () => {
         <Image src="/images/logo.jpg" width={768} height={1152} alt="Future Mariners Foundation" className="size-20 rounded-full object-cover" />
         <h2 className="mt-6 font-mulish text-2xl font-bold">Future Mariners Foundation</h2>
         <p className="mt-4 max-w-sm leading-7 text-[#b8c7dc]">Disciplined online preparation for IMUCET aspirants who are ready to chart their course.</p>
+        <div className="mt-6 flex items-center gap-3"><a href={whatsappUrl} aria-label="WhatsApp support" className="flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#25D366]"><WhatsApp className="size-5" /></a><a href={instagramUrl} target="_blank" rel="noreferrer" aria-label="Instagram" className="flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-[#E4405F]"><Instagram className="size-4" /></a></div>
       </div>
       {isAuthenticated ? <div><h3 className="font-bold text-[#e4aa3b]">Student support</h3><ul className="mt-5 space-y-3 text-sm text-[#b8c7dc]"><li><Link href="/contact" className="hover:text-white">Contact support</Link></li><li><Link href="/doubts" className="hover:text-white">Submit a doubt</Link></li></ul></div> : <div><h3 className="font-bold text-[#e4aa3b]">Explore</h3><ul className="mt-5 space-y-3 text-sm text-[#b8c7dc]"><li><Link href="/#courses" className="hover:text-white">Our courses</Link></li><li><Link href="/#why-us" className="hover:text-white">Why Future Mariners</Link></li><li><Link href="/#faq" className="hover:text-white">FAQs</Link></li></ul></div>}
       <div><h3 className="font-bold text-[#e4aa3b]">Student access</h3><ul className="mt-5 space-y-3 text-sm text-[#b8c7dc]">{isAuthenticated ? <><li><Link href="/account" className="hover:text-white">My account</Link></li><li><Link href="/dashboard" className="hover:text-white">Dashboard</Link></li></> : <><li><Link href="/signup" className="hover:text-white">Create account</Link></li><li><Link href="/login" className="hover:text-white">Sign in</Link></li></>}<li>WhatsApp support after enrolment</li></ul></div>

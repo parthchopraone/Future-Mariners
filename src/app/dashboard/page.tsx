@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { WhatsApp } from "@/lib/icons";
 
 const lessonsDone = (lessonCount: number, progress: number) => Math.round((lessonCount * progress) / 100);
 
@@ -19,6 +20,7 @@ const DashboardPage = async () => {
   const paid = enrollments.filter((e) => e.status === "PAID");
   const hasCompleteCourse = paid.some((e) => e.course.slug === "complete-imucet-preparation");
   const hasSponsorshipCourse = paid.some((e) => e.course.slug === "imucet-interview-preparation");
+  const whatsappUrl = process.env.NEXT_PUBLIC_WHATSAPP_URL ?? "/contact";
   const activeEnrollment = paid.find((e) => e.progress < 100) ?? paid[0];
 
   const totalLessonsCompleted = enrollments.reduce(
@@ -150,6 +152,8 @@ const DashboardPage = async () => {
             </Link>
           </section>
         )}
+
+        {paid.length > 0 && <section className="grid gap-4 sm:grid-cols-2"><a href={whatsappUrl} className="flex items-center gap-4 rounded-xl bg-[#25D366] px-6 py-5 font-bold text-white shadow-sm transition hover:bg-[#1fb957]"><WhatsApp className="size-7" /><span>Join WhatsApp support</span><span className="ml-auto">→</span></a><Link href="/doubts" className="flex items-center gap-4 rounded-xl bg-[#17233d] px-6 py-5 font-bold text-white shadow-sm transition hover:bg-[#273b58]"><span className="flex size-7 items-center justify-center rounded-full border-2 border-white text-sm">?</span><span>Submit a doubt</span><span className="ml-auto">→</span></Link></section>}
 
         {/* Library: full-width rows scale cleanly from 1 to many courses */}
         <section>
