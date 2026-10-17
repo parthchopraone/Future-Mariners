@@ -4,6 +4,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./prisma";
+import { isValidPhone, normalizePhone } from "./phone";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -20,8 +21,9 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         const identifier = String(credentials?.identifier ?? "").trim();
         if (!identifier || !credentials?.password) return null;
+        const normalizedPhone = isValidPhone(identifier) ? normalizePhone(identifier) : null;
         const user = await prisma.user.findFirst({
-          where: { OR: [{ email: identifier.toLowerCase() }, { phone: identifier }] },
+          where: { OR: [{ email: identifier.toLowerCase() }, ...(normalizedPhone ? [{ phone: normalizedPhone }] : [])] },
         });
         if (!user?.passwordHash || !(await compare(credentials.password, user.passwordHash))) return null;
         return { id: user.id, name: user.name, email: user.email };

@@ -1,10 +1,11 @@
 import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isValidPhone, normalizePhone } from "@/lib/phone";
 
 const courses = new Map([
-  ["complete-imucet-preparation", { title: "Complete IMUCET Preparation", price: 5999 }],
-  ["imucet-interview-preparation", { title: "IMUCET Interview Preparation", price: 2999 }],
+  ["complete-imucet-preparation", { title: "Complete IMUCET + Sponsorship Preparation", price: 4999 }],
+  ["imucet-interview-preparation", { title: "Complete Sponsorship Preparation", price: 2499 }],
 ]);
 
 export async function POST(request: Request) {
@@ -12,12 +13,12 @@ export async function POST(request: Request) {
     const body = await request.json();
     const name = String(body.name ?? "").trim();
     const email = String(body.email ?? "").trim().toLowerCase();
-    const phone = String(body.phone ?? "").trim();
+    const phone = normalizePhone(String(body.phone ?? "").trim());
     const password = String(body.password ?? "");
     const slug = String(body.courseSlug ?? "");
     const course = courses.get(slug);
 
-    if (!name || !email || !phone || password.length < 8 || !course) {
+    if (!name || !email || !isValidPhone(phone) || password.length < 8 || !course) {
       return NextResponse.json({ error: "Enter valid details and choose a course." }, { status: 400 });
     }
 

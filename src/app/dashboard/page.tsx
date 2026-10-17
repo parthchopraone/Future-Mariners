@@ -17,6 +17,8 @@ const DashboardPage = async () => {
   });
 
   const paid = enrollments.filter((e) => e.status === "PAID");
+  const hasCompleteCourse = paid.some((e) => e.course.slug === "complete-imucet-preparation");
+  const hasSponsorshipCourse = paid.some((e) => e.course.slug === "imucet-interview-preparation");
   const activeEnrollment = paid.find((e) => e.progress < 100) ?? paid[0];
 
   const totalLessonsCompleted = enrollments.reduce(
@@ -50,12 +52,7 @@ const DashboardPage = async () => {
                 Build your maritime career one focused lesson at a time.
               </p>
             </div>
-            <Link
-              href="/dashboard/explore"
-              className="inline-flex w-fit items-center rounded-md border border-[#cfd5df] px-5 py-3 text-sm font-bold text-[#17233d] transition hover:border-[#17233d] hover:bg-[#17233d] hover:text-white"
-            >
-              Explore courses
-            </Link>
+            {!hasCompleteCourse && <Link href="/dashboard/explore" className="inline-flex w-fit items-center rounded-md border border-[#cfd5df] px-5 py-3 text-sm font-bold text-[#17233d] transition hover:border-[#17233d] hover:bg-[#17233d] hover:text-white">{hasSponsorshipCourse ? "Upgrade to complete course" : "Explore courses"}</Link>}
           </div>
 
           <dl className="mt-8 grid grid-cols-3 divide-x divide-[#e7eaf0] rounded-xl border border-[#e7eaf0] bg-[#fbfbfd]">
@@ -149,7 +146,7 @@ const DashboardPage = async () => {
               Your enrolled courses and progress will appear here after you select a programme.
             </p>
             <Link href="/dashboard/explore" className="mt-6 inline-flex rounded-md bg-[#17233d] px-5 py-3 text-sm font-bold text-white">
-              Browse courses <span className="ml-3 text-[#f0b429]">→</span>
+              {hasSponsorshipCourse ? "Upgrade to complete course" : "Browse courses"} <span className="ml-3 text-[#f0b429]">→</span>
             </Link>
           </section>
         )}

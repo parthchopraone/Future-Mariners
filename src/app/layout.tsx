@@ -20,7 +20,10 @@ const mulish = Mulish({
 });
 
 export const metadata: Metadata = {
-  title: `${siteName}`,
+  title: {
+    default: "Future Mariners Foundation",
+    template: `%s | ${siteName}`,
+  },
   description: "Future Mariners Foundation IMUCET preparation courses.",
   keywords: ["Future Mariners", "IMUCET", "IMUCET preparation"],
 
@@ -51,6 +54,7 @@ export const metadata: Metadata = {
       },
     ],
   },
+  icons: { icon: "/images/logo.jpg" },
 };
 
 export default function RootLayout({

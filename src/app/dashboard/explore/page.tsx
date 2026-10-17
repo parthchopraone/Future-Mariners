@@ -15,6 +15,7 @@ const ExplorePage = async () => {
   });
   const purchasedSlugs = new Set(paidEnrollments.map((enrollment) => enrollment.course.slug));
   const availableCourses = coursesData.filter((course) => !purchasedSlugs.has(course.slug.current));
+  const isUpgrade = purchasedSlugs.has("imucet-interview-preparation");
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-[#f3f6f8] text-[#102c63]">
@@ -23,7 +24,7 @@ const ExplorePage = async () => {
           <Link href="/dashboard" className="text-sm font-bold text-[#bd8014]">← Back to dashboard</Link>
           <p className="mt-8 text-xs font-bold tracking-[0.2em] text-[#bd8014] uppercase">Explore more learning</p>
           <h1 className="mt-3 max-w-2xl font-mulish text-4xl font-bold leading-tight sm:text-5xl">Choose your next course.</h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-[#526176]">Browse courses you have not purchased yet and find the right next step for your maritime career.</p>
+          <p className="mt-4 max-w-2xl text-base leading-7 text-[#526176]">{isUpgrade ? "Upgrade to the complete IMUCET and Sponsorship preparation course." : "Browse courses you have not purchased yet and find the right next step for your maritime career."}</p>
         </div>
       </section>
 
@@ -37,7 +38,7 @@ const ExplorePage = async () => {
                 <p className="mt-4 min-h-14 leading-7 text-[#526176]">{course.shortDescription}</p>
                 <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-[#e5eaf0] pt-6">
                   <p className="font-mulish text-2xl font-bold">₹{course.price.toLocaleString("en-IN")} <span className="text-sm font-normal text-[#718096]">one-time</span></p>
-                  <Link href={`/courses/${course.slug.current}`} className="inline-flex items-center rounded-md bg-[#102c63] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#273b58]">View course <span className="ml-3 text-[#e4aa3b]">→</span></Link>
+                  <Link href={`/courses/${course.slug.current}`} className="inline-flex items-center rounded-md bg-[#102c63] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#273b58]">{isUpgrade ? "Upgrade now" : "View course"} <span className="ml-3 text-[#e4aa3b]">→</span></Link>
                 </div>
               </article>
             ))}

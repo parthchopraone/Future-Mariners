@@ -10,7 +10,7 @@ import { authOptions } from "@/lib/auth";
 export const metadata: Metadata = {
   title: `IMUCET Preparation | ${siteName}`,
   description: "Disciplined IMUCET preparation for aspiring future mariners.",
-  keywords: ["IMUCET preparation", "IMUCET interview preparation", "Future Mariners"],
+  keywords: ["IMUCET preparation", "sponsorship preparation", "Future Mariners"],
   alternates: {
     canonical: `${siteUrl}`,
   },

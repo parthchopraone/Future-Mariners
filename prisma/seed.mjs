@@ -18,8 +18,8 @@ async function main() {
   });
   const course = await prisma.course.upsert({
     where: { slug: "complete-imucet-preparation" },
-    update: { title: "Complete IMUCET Preparation", price: 5999 },
-    create: { slug: "complete-imucet-preparation", title: "Complete IMUCET Preparation", price: 5999 },
+    update: { title: "Complete IMUCET + Sponsorship Preparation", price: 4999 },
+    create: { slug: "complete-imucet-preparation", title: "Complete IMUCET + Sponsorship Preparation", price: 4999 },
   });
   const lessons = ["IMUCET strategy and study plan", "Mathematics foundations", "Physics fundamentals", "English and communication", "General knowledge for maritime aspirants", "Mock test and interview preparation"];
   for (const [index, title] of lessons.entries()) {
