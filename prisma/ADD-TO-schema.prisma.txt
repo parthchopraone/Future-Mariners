@@ -1,0 +1,21 @@
+// 1) Add this new model anywhere in prisma/schema.prisma:
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  courseId    String
+  videoId     String   // Bunny video ID
+  completedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId, videoId])
+  @@index([userId, courseId])
+  @@schema("public")
+}
+
+// 2) Add this line inside the existing "model User { ... }":
+//      lessonProgress LessonProgress[]
+//
+// 3) Add this line inside the existing "model Course { ... }":
+//      lessonProgress LessonProgress[]

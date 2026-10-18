@@ -4,30 +4,50 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { WhatsApp } from "@/lib/icons";
+import { getCourseProgress, type CourseProgress } from "@/lib/courseProgress";
 
-const lessonsDone = (lessonCount: number, progress: number) => Math.round((lessonCount * progress) / 100);
+// One button style set for the whole dashboard: same size, shape and arrow.
+const btn = "inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-bold transition";
+const btnPrimary = `${btn} bg-[#7d52f4] text-white hover:bg-[#936ff7]`;
+const btnOutline = `${btn} border border-[#cfd5df] text-[#17233d] hover:border-[#17233d] hover:bg-[#17233d] hover:text-white`;
+const btnPending = `${btn} border border-[#f0b429] bg-[#fff8e6] text-[#8a6100] hover:bg-[#fff0c7]`;
+const Arrow = () => <span aria-hidden className="ml-2">→</span>;
+
+// Both quick-action cards share the same shape and size.
+const actionCard = "flex items-center gap-4 rounded-xl px-6 py-5 font-bold text-white shadow-sm transition";
+
+// How many modules to show in the dashboard panel.
+const MODULE_WINDOW = 4;
+
+const emptyProgress: CourseProgress = {
+  modules: [], total: 0, done: 0, percent: 0, completedIds: new Set(), nextVideo: null, loadError: false,
+};
 
 const DashboardPage = async () => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/login");
+  const userId = session.user.id;
 
   const enrollments = await prisma.enrollment.findMany({
-    where: { userId: session.user.id },
-    include: { course: { include: { lessons: { orderBy: { sortOrder: "asc" } } } } },
+    where: { userId },
+    include: { course: true },
     orderBy: { createdAt: "desc" },
   });
 
   const paid = enrollments.filter((e) => e.status === "PAID");
+
+  // Real progress for every paid course: Bunny modules + this student's completed lessons.
+  const progressList = await Promise.all(paid.map((e) => getCourseProgress(userId, e.courseId, e.course.slug)));
+  const progressById = new Map(paid.map((e, i) => [e.id, progressList[i]]));
+  const progressOf = (id: string) => progressById.get(id) ?? emptyProgress;
+
   const hasCompleteCourse = paid.some((e) => e.course.slug === "complete-imucet-preparation");
   const hasSponsorshipCourse = paid.some((e) => e.course.slug === "imucet-interview-preparation");
-  const whatsappUrl = process.env.NEXT_PUBLIC_WHATSAPP_URL ?? "/contact";
-  const activeEnrollment = paid.find((e) => e.progress < 100) ?? paid[0];
+  const activeEnrollment = paid.find((e) => progressOf(e.id).percent < 100) ?? paid[0];
+  const active = activeEnrollment ? progressOf(activeEnrollment.id) : emptyProgress;
 
-  const totalLessonsCompleted = enrollments.reduce(
-    (total, e) => total + lessonsDone(e.course.lessons.length, e.progress),
-    0,
-  );
-  const averageProgress = paid.length ? Math.round(paid.reduce((t, e) => t + e.progress, 0) / paid.length) : 0;
+  const totalLessonsCompleted = progressList.reduce((t, p) => t + p.done, 0);
+  const averageProgress = paid.length ? Math.round(progressList.reduce((t, p) => t + p.percent, 0) / paid.length) : 0;
   const firstName = session.user.name?.split(" ")[0] ?? "Student";
 
   const stats = [
@@ -36,15 +56,23 @@ const DashboardPage = async () => {
     { label: "Average progress", value: `${averageProgress}%` },
   ];
 
-  // Lesson window for the "Up next" panel
-  const activeLessons = activeEnrollment?.course.lessons ?? [];
-  const activeDone = activeEnrollment ? lessonsDone(activeLessons.length, activeEnrollment.progress) : 0;
-  const windowStart = Math.min(Math.max(activeDone - 1, 0), Math.max(activeLessons.length - 4, 0));
-  const visibleLessons = activeLessons.slice(windowStart, windowStart + 4);
+  const startedAnything = active.done > 0;
+  const resumeHref = activeEnrollment
+    ? `/learn/${activeEnrollment.course.slug}${active.nextVideo ? `?v=${active.nextVideo.id}` : ""}`
+    : "/dashboard";
+  const courseDone = active.total > 0 && active.percent === 100;
+
+  // Show only 4 modules, starting from the one the student is on.
+  // If they are on one of the last modules, show the last 4.
+  const modules = active.modules;
+  const currentIdx = active.nextVideo
+    ? modules.findIndex((m) => m.videos.some((v) => v.id === active.nextVideo?.id))
+    : modules.length - 1;
+  const windowStart = Math.max(0, Math.min(currentIdx, modules.length - MODULE_WINDOW));
+  const visibleModules = modules.slice(windowStart, windowStart + MODULE_WINDOW);
 
   return (
     <main className="min-h-[calc(100vh-80px)] bg-[#f7f8fa] text-[#17233d]">
-      {/* Header: greeting + at-a-glance stats */}
       <section className="border-b border-[#e7eaf0] bg-white">
         <div className="container py-8 sm:py-10">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -54,7 +82,12 @@ const DashboardPage = async () => {
                 Build your maritime career one focused lesson at a time.
               </p>
             </div>
-            {!hasCompleteCourse && <Link href="/dashboard/explore" className="inline-flex w-fit items-center rounded-md border border-[#cfd5df] px-5 py-3 text-sm font-bold text-[#17233d] transition hover:border-[#17233d] hover:bg-[#17233d] hover:text-white">{hasSponsorshipCourse ? "Upgrade to complete course" : "Explore courses"}</Link>}
+            {!hasCompleteCourse && (
+              <Link href="/dashboard/explore" className={`${btnOutline} w-fit`}>
+                {hasSponsorshipCourse ? "Upgrade to complete course" : "Explore courses"}
+                <Arrow />
+              </Link>
+            )}
           </div>
 
           <dl className="mt-8 grid grid-cols-3 divide-x divide-[#e7eaf0] rounded-xl border border-[#e7eaf0] bg-[#fbfbfd]">
@@ -69,74 +102,95 @@ const DashboardPage = async () => {
       </section>
 
       <div className="container space-y-12 py-8 sm:py-12">
-        {/* Continue learning */}
         {activeEnrollment ? (
           <section className="overflow-hidden rounded-xl bg-[#17233d] text-white shadow-[0_18px_45px_rgba(23,35,61,0.16)]">
             <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
               <div className="flex flex-col p-7 sm:p-10">
-                <p className="text-sm font-bold text-[#f0b429]">Continue learning</p>
+                <p className="text-sm font-bold text-[#f0b429]">{courseDone ? "Course complete" : "Continue learning"}</p>
                 <h2 className="mt-3 font-mulish text-3xl font-bold sm:text-4xl">{activeEnrollment.course.title}</h2>
                 <p className="mt-2 text-sm text-[#b8c3d5]">
-                  {activeLessons.length
-                    ? `${activeDone} of ${activeLessons.length} lessons complete`
-                    : "Your course is ready for your first lesson"}
+                  {active.total
+                    ? `${active.done} of ${active.total} lessons complete`
+                    : active.loadError
+                      ? "We could not load your lessons right now"
+                      : "Your lessons are being added"}
                 </p>
 
                 <div className="mt-8">
                   <div className="flex items-center justify-between text-xs font-bold text-[#d9e0eb]">
                     <span>Course progress</span>
-                    <span>{activeEnrollment.progress}%</span>
+                    <span>{active.percent}%</span>
                   </div>
                   <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/15">
-                    <div className="h-full rounded-full bg-[#f0b429]" style={{ width: `${activeEnrollment.progress}%` }} />
+                    <div className="h-full rounded-full bg-[#f0b429]" style={{ width: `${active.percent}%` }} />
                   </div>
                 </div>
 
-                <Link
-                  href={`/learn/${activeEnrollment.course.slug}`}
-                  className="mt-8 inline-flex w-fit items-center rounded-md bg-[#7d52f4] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#936ff7]"
-                >
-                  {activeEnrollment.progress ? "Resume course" : "Start course"}
-                  <span className="ml-3">→</span>
+                {active.nextVideo && (
+                  <p className="mt-6 text-sm text-[#b8c3d5]">
+                    {startedAnything ? "Up next" : "Start with"}: <span className="font-bold text-white">{active.nextVideo.title}</span>
+                  </p>
+                )}
+
+                <Link href={resumeHref} className={`${btnPrimary} mt-6 w-fit`}>
+                  {courseDone ? "Review course" : startedAnything ? "Resume course" : "Start course"}
+                  <Arrow />
                 </Link>
               </div>
 
-              {/* Replaces the duplicated "42%" panel with something useful */}
+              {/* Module-by-module progress: 4 modules, starting from the current one */}
               <div className="border-t border-white/10 bg-[linear-gradient(135deg,#283b61,#1b2946)] p-7 sm:p-10 lg:border-t-0 lg:border-l">
-                <h3 className="text-sm font-bold text-[#d9e0eb]">Your lessons</h3>
-                {visibleLessons.length ? (
-                  <ol className="mt-4 space-y-2">
-                    {visibleLessons.map((lesson, i) => {
-                      const index = windowStart + i;
-                      const state = index < activeDone ? "done" : index === activeDone ? "next" : "upcoming";
-                      return (
-                        <li
-                          key={lesson.id}
-                          className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm ${
-                            state === "next" ? "bg-white/12 ring-1 ring-[#f0b429]/60" : "bg-white/5"
-                          }`}
-                        >
-                          <span
-                            className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                              state === "done"
-                                ? "bg-[#f0b429] text-[#17233d]"
-                                : state === "next"
-                                  ? "border border-[#f0b429] text-[#f0b429]"
-                                  : "border border-white/25 text-white/50"
-                            }`}
+                <div className="flex items-baseline justify-between gap-4">
+                  <h3 className="text-sm font-bold text-[#d9e0eb]">Your modules</h3>
+                  {modules.length > MODULE_WINDOW && (
+                    <span className="text-xs text-[#b8c3d5]">
+                      {windowStart + 1}–{windowStart + visibleModules.length} of {modules.length}
+                    </span>
+                  )}
+                </div>
+
+                {visibleModules.length ? (
+                  <>
+                    <ol className="mt-4 space-y-2">
+                      {visibleModules.map((m, i) => {
+                        const index = windowStart + i;
+                        const hasVideos = m.videos.length > 0;
+                        const complete = hasVideos && m.done === m.videos.length;
+                        const isCurrent = index === currentIdx && !courseDone;
+                        const pct = hasVideos ? Math.round((m.done / m.videos.length) * 100) : 0;
+                        return (
+                          <li
+                            key={m.collectionId}
+                            className={`rounded-lg px-4 py-3 text-sm ${isCurrent ? "bg-white/12 ring-1 ring-[#f0b429]/60" : "bg-white/5"}`}
                           >
-                            {state === "done" ? "✓" : index + 1}
-                          </span>
-                          <span className={`min-w-0 flex-1 truncate ${state === "upcoming" ? "text-[#b8c3d5]" : "text-white"}`}>
-                            {lesson.title}
-                          </span>
-                          {state === "next" && <span className="text-xs font-bold text-[#f0b429]">Up next</span>}
-                        </li>
-                      );
-                    })}
-                  </ol>
+                            <div className="flex items-center gap-3">
+                              <span
+                                className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                                  complete ? "bg-[#f0b429] text-[#17233d]" : isCurrent ? "border border-[#f0b429] text-[#f0b429]" : "border border-white/25 text-white/50"
+                                }`}
+                              >
+                                {complete ? "✓" : index + 1}
+                              </span>
+                              <span className={`min-w-0 flex-1 truncate ${hasVideos ? "text-white" : "text-[#b8c3d5]"}`}>{m.title}</span>
+                              <span className="shrink-0 text-xs text-[#b8c3d5]">{hasVideos ? `${m.done}/${m.videos.length}` : "Coming soon"}</span>
+                            </div>
+                            {hasVideos && (
+                              <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/15">
+                                <div className="h-full rounded-full bg-[#f0b429]" style={{ width: `${pct}%` }} />
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ol>
+                    {modules.length > MODULE_WINDOW && (
+                      <Link href={`/learn/${activeEnrollment.course.slug}`} className="mt-4 inline-block text-xs font-bold text-[#f0b429] hover:underline">
+                        View all {modules.length} modules →
+                      </Link>
+                    )}
+                  </>
                 ) : (
-                  <p className="mt-4 text-sm leading-6 text-[#b8c3d5]">Lessons for this course will appear here soon.</p>
+                  <p className="mt-4 text-sm leading-6 text-[#b8c3d5]">Modules for this course will appear here soon.</p>
                 )}
               </div>
             </div>
@@ -147,61 +201,72 @@ const DashboardPage = async () => {
             <p className="mt-3 max-w-xl leading-7 text-[#687286]">
               Your enrolled courses and progress will appear here after you select a programme.
             </p>
-            <Link href="/dashboard/explore" className="mt-6 inline-flex rounded-md bg-[#17233d] px-5 py-3 text-sm font-bold text-white">
-              {hasSponsorshipCourse ? "Upgrade to complete course" : "Browse courses"} <span className="ml-3 text-[#f0b429]">→</span>
+            <Link href="/dashboard/explore" className={`${btnPrimary} mt-6 w-fit`}>
+              {hasSponsorshipCourse ? "Upgrade to complete course" : "Browse courses"}
+              <Arrow />
             </Link>
           </section>
         )}
 
-        {paid.length > 0 && <section className="grid gap-4 sm:grid-cols-2"><a href={whatsappUrl} className="flex items-center gap-4 rounded-xl bg-[#25D366] px-6 py-5 font-bold text-white shadow-sm transition hover:bg-[#1fb957]"><WhatsApp className="size-7" /><span>Join WhatsApp support</span><span className="ml-auto">→</span></a><Link href="/doubts" className="flex items-center gap-4 rounded-xl bg-[#17233d] px-6 py-5 font-bold text-white shadow-sm transition hover:bg-[#273b58]"><span className="flex size-7 items-center justify-center rounded-full border-2 border-white text-sm">?</span><span>Submit a doubt</span><span className="ml-auto">→</span></Link></section>}
+        {paid.length > 0 && (
+          <section className="grid gap-4 sm:grid-cols-2">
+            <a
+              href={"https://chat.whatsapp.com/H7or5WdwgAvBOVnkhXEjSg"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${actionCard} bg-[#25D366] hover:bg-[#1fb957]`}
+            >
+              <WhatsApp className="size-7" />
+              <span>Join WhatsApp support</span>
+              <span aria-hidden className="ml-auto">→</span>
+            </a>
+            <Link href="/doubts" className={`${actionCard} bg-[#17233d] hover:bg-[#273b58]`}>
+              <span className="flex size-7 items-center justify-center rounded-full border-2 border-white text-sm">?</span>
+              <span>Submit a doubt</span>
+              <span aria-hidden className="ml-auto">→</span>
+            </Link>
+          </section>
+        )}
 
-        {/* Library: full-width rows scale cleanly from 1 to many courses */}
         <section>
           <h2 className="border-b border-[#dfe3e9] pb-4 font-mulish text-2xl font-bold sm:text-3xl">My courses</h2>
 
           {enrollments.length ? (
             <ul className="mt-6 space-y-4">
               {enrollments.map((enrollment) => {
-                const lessonCount = enrollment.course.lessons.length;
-                const done = lessonsDone(lessonCount, enrollment.progress);
                 const isPaid = enrollment.status === "PAID";
+                const p = isPaid ? progressOf(enrollment.id) : emptyProgress;
+                const href = `/learn/${enrollment.course.slug}${p.nextVideo ? `?v=${p.nextVideo.id}` : ""}`;
 
                 return (
                   <li
                     key={enrollment.id}
                     className="flex flex-col gap-5 rounded-xl border border-[#e3e6ec] bg-white p-5 transition hover:border-[#b5a5f5] sm:flex-row sm:items-center sm:gap-6"
                   >
-                    {/* Progress ring */}
                     <div
                       className="flex size-16 shrink-0 items-center justify-center rounded-full"
-                      style={{ background: `conic-gradient(#7d52f4 ${enrollment.progress}%, #e9ebf1 0)` }}
-                      aria-label={`${enrollment.progress}% complete`}
+                      style={{ background: `conic-gradient(#7d52f4 ${p.percent}%, #e9ebf1 0)` }}
+                      aria-label={`${p.percent}% complete`}
                     >
-                      <div className="flex size-13 items-center justify-center rounded-full bg-white text-sm font-bold">
-                        {enrollment.progress}%
-                      </div>
+                      <div className="flex size-13 items-center justify-center rounded-full bg-white text-sm font-bold">{p.percent}%</div>
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <h3 className="font-mulish text-xl font-bold">{enrollment.course.title}</h3>
                       <p className="mt-1 text-sm text-[#687286]">
-                        {lessonCount ? `${done} of ${lessonCount} lessons complete` : "Lessons coming soon"}
+                        {!isPaid ? "Payment pending" : p.total ? `${p.done} of ${p.total} lessons complete` : "Lessons coming soon"}
                       </p>
                     </div>
 
                     {isPaid ? (
-                      <Link
-                        href={`/learn/${enrollment.course.slug}`}
-                        className="inline-flex w-full items-center justify-center rounded-md bg-[#7d52f4] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#936ff7] sm:w-auto"
-                      >
-                        {enrollment.progress ? "Continue" : "Start"}
+                      <Link href={href} className={`${btnPrimary} w-full sm:w-auto`}>
+                        {p.total && p.percent === 100 ? "Review" : p.done ? "Continue" : "Start"}
+                        <Arrow />
                       </Link>
                     ) : (
-                      <Link
-                        href={`/checkout?course=${enrollment.course.slug}`}
-                        className="inline-flex w-full items-center justify-center rounded-md border border-[#f0b429] bg-[#fff8e6] px-5 py-2.5 text-sm font-bold text-[#8a6100] transition hover:bg-[#fff0c7] sm:w-auto"
-                      >
+                      <Link href={`/checkout?course=${enrollment.course.slug}`} className={`${btnPending} w-full sm:w-auto`}>
                         Complete payment
+                        <Arrow />
                       </Link>
                     )}
                   </li>

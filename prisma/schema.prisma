@@ -10,18 +10,19 @@ datasource db {
 }
 
 model User {
-  id            String       @id @default(cuid())
-  name          String?
-  email         String?      @unique
-  emailVerified DateTime?
-  image         String?
-  passwordHash  String?
-  phone         String?
-  accounts      Account[]
-  sessions      Session[]
-  enrollments   Enrollment[]
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  id             String           @id @default(cuid())
+  name           String?
+  email          String?          @unique
+  emailVerified  DateTime?
+  image          String?
+  passwordHash   String?
+  phone          String?
+  accounts       Account[]
+  sessions       Session[]
+  enrollments    Enrollment[]
+  lessonProgress LessonProgress[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
 
   @@schema("public")
 }
@@ -65,12 +66,13 @@ model VerificationToken {
 }
 
 model Course {
-  id          String       @id @default(cuid())
-  slug        String       @unique
-  title       String
-  price       Int
-  enrollments Enrollment[]
-  lessons     Lesson[]
+  id             String           @id @default(cuid())
+  slug           String           @unique
+  title          String
+  price          Int
+  enrollments    Enrollment[]
+  lessons        Lesson[]
+  lessonProgress LessonProgress[]
 
   @@schema("public")
 }
@@ -93,18 +95,32 @@ model Lesson {
 }
 
 model Enrollment {
-  id              String   @id @default(cuid())
-  userId          String
-  courseId        String
-  status          String   @default("PENDING_PAYMENT")
-  razorpayOrderId String? @unique
+  id                String  @id @default(cuid())
+  userId            String
+  courseId          String
+  status            String  @default("PENDING_PAYMENT")
+  razorpayOrderId   String? @unique
   razorpayPaymentId String?
-  paymentAmount   Int?
-  progress        Int      @default(0)
-  createdAt       DateTime @default(now())
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  paymentAmount     Int?
+  progress          Int     @default(0)
+  createdAt         DateTime @default(now())
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course            Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
+  @@schema("public")
+}
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  courseId    String
+  videoId     String
+  completedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId, videoId])
+  @@index([userId, courseId])
   @@schema("public")
 }
