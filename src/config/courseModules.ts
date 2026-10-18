@@ -7,11 +7,12 @@ export type CourseModule = { collectionId: string; title?: string };
 export const courseModules: Record<string, CourseModule[]> = {
   "complete-imucet-preparation": [
     { collectionId: "1bdc80d8-4273-497d-80df-000d052e9115", title: "Module 1: ENGLISH IMUCET" },
-    { collectionId: "7147a737-8db3-4736-8f58-dcc4e93354af", title: "Module 2: GEOGRAPHY IMUCET" },
-    { collectionId: "40db952d-5d21-4ff2-bc9c-a3a23f0d408a", title: "Module 3: CHEMISTRY IMUCET" },
-    { collectionId: "e6468c7d-af6d-42eb-a013-73868cf9d91b", title: "Module 4: MATHS IMUCET" },
-    { collectionId: "e1c4f3d7-02b0-4daf-99f1-fd48c1bb09a7", title: "Module 5: PHYSICS IMUCET" },
-    { collectionId: "4e9f15d0-d4b5-44b1-9573-508a7dff184d", title: "Module 6: GENERAL APTITUDE IMUCET" },
+
+    { collectionId: "4e9f15d0-d4b5-44b1-9573-508a7dff184d", title: "Module 2: GENERAL APTITUDE IMUCET" },
+    { collectionId: "7147a737-8db3-4736-8f58-dcc4e93354af", title: "Module 3: GEOGRAPHY IMUCET" },
+    { collectionId: "40db952d-5d21-4ff2-bc9c-a3a23f0d408a", title: "Module 4: CHEMISTRY IMUCET" },
+    { collectionId: "e6468c7d-af6d-42eb-a013-73868cf9d91b", title: "Module 5: MATHS IMUCET" },
+    { collectionId: "e1c4f3d7-02b0-4daf-99f1-fd48c1bb09a7", title: "Module 6: PHYSICS IMUCET" },
     { collectionId: "cef74b65-e697-4e78-b1aa-9f2589275978", title: "Module 7: GENERAL KNOWLEDGE IMUCET" },
     
 
