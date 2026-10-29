@@ -10,7 +10,6 @@ import {
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import Button from "../ui/button";
-import ButtonArrow from "../ui/buttonArrow";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
@@ -65,7 +64,7 @@ const MobileNavigation = ({ data, isAuthenticated }: { data: MenuType[]; isAuthe
           <CloseIcon />
         </button>
         {/* menu items */}
-        <ul className="mt-5 flex flex-1 flex-col">
+        <ul className={cn("mt-5 flex flex-1 flex-col", isAuthenticated && "hidden")}>
           {data.map(({ href, id, label, subMenu }) => {
             // Check if current path matches parent or any submenu item
             const isActive =
@@ -132,14 +131,15 @@ const MobileNavigation = ({ data, isAuthenticated }: { data: MenuType[]; isAuthe
           })}
         </ul>
 
-        <div className="mt-auto">
-          <Button asChild className="flex h-12 w-full justify-between gap-2.5 py-1.5 pr-1.5 pl-6 text-base tracking-base lg:hidden">
+        <div className={cn(isAuthenticated ? "mt-5" : "mt-auto")}>
+          <Button asChild className="flex h-12 w-full justify-center text-base tracking-base lg:hidden">
             <Link href={isAuthenticated ? "/dashboard" : "/login"}>
               {isAuthenticated ? "Dashboard" : "Login/ Sign up"}
-              <ButtonArrow />
             </Link>
           </Button>
-          {isAuthenticated && <button type="button" onClick={() => signOut({ callbackUrl: "/login" })} className="mt-4 w-full px-5 py-3 text-left text-sm font-bold text-[#526176]">Log out</button>}
+          {isAuthenticated && (
+            <button type="button" onClick={() => signOut({ callbackUrl: "/login" })} className="mt-3 w-full px-5 py-3 text-center text-sm font-bold text-[#526176] transition hover:text-[#7d52f4]">Log out</button>
+          )}
         </div>
       </nav>
     </div>

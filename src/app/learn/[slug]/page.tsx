@@ -7,7 +7,6 @@ import { getBunnyEmbedUrl } from "@/lib/bunny";
 import { getCourseProgress } from "@/lib/courseProgress";
 import MarkComplete from "../markComplete";
 import BackLink from "@/components/ui/backLink";
-import { ArrowLeft, ArrowRight } from "@/lib/icons";
 
 const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
@@ -59,10 +58,9 @@ const LearnPage = async ({
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
           <section>
-            <p className="text-sm font-bold tracking-[0.18em] text-[#e4aa3b] uppercase">Now learning</p>
-            <h1 className="mt-3 font-mulish text-3xl font-bold sm:text-4xl">{enrollment.course.title}</h1>
+            <h1 className="font-mulish text-3xl font-bold sm:text-4xl">{enrollment.course.title}</h1>
 
-            <div className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-black p-1 shadow-2xl shadow-black/20">
+            <div className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-black p-1 shadow-2xl shadow-black/20 sm:mt-8">
               <div className="aspect-video overflow-hidden rounded-2xl bg-[#16243d]">
                 {embedUrl ? (
                   <iframe
@@ -89,12 +87,17 @@ const LearnPage = async ({
                 <h2 className="mt-2 font-mulish text-2xl font-bold">{current.title}</h2>
                 <div className="mt-5 flex flex-wrap items-start gap-3">
                   <MarkComplete slug={slug} videoId={current.id} completed={completedIds.has(current.id)} />
+                  <Link
+                    href="/doubts"
+                    className="inline-flex min-h-11 items-center rounded-xl border border-white/15 px-4 py-2.5 text-sm font-bold text-[#d9e1ec] transition hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e4aa3b]"
+                  >
+                    Ask a doubt
+                  </Link>
                   {prev && (
                     <Link
                       href={href(prev.id)}
-                      className="group inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 px-4 py-2.5 text-sm font-bold text-[#d9e1ec] transition hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e4aa3b]"
+                      className="group hidden min-h-11 items-center gap-2 rounded-xl border border-white/15 px-4 py-2.5 text-sm font-bold text-[#d9e1ec] transition hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e4aa3b] sm:inline-flex"
                     >
-                      <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
                       Previous
                     </Link>
                   )}
@@ -104,7 +107,6 @@ const LearnPage = async ({
                       className="group inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#7D52F4] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#7D52F4]/20 transition hover:-translate-y-0.5 hover:bg-[#6d43e8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e4aa3b]"
                     >
                       Next lesson
-                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
                     </Link>
                   )}
                 </div>

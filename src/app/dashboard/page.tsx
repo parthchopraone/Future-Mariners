@@ -14,7 +14,7 @@ const btnPending = `${btn} border border-[#f0b429] bg-[#fff8e6] text-[#8a6100] h
 const Arrow = () => <span aria-hidden className="ml-2">→</span>;
 
 // Both quick-action cards share the same shape and size.
-const actionCard = "flex items-center gap-4 rounded-xl px-6 py-5 font-bold text-white shadow-sm transition";
+const actionCard = "flex items-center gap-3 rounded-xl px-4 py-4 text-sm font-bold text-white shadow-sm transition sm:gap-4 sm:px-6 sm:py-5 sm:text-base";
 
 // How many modules to show in the dashboard panel.
 const MODULE_WINDOW = 4;
@@ -74,13 +74,10 @@ const DashboardPage = async () => {
   return (
     <main className="min-h-[calc(100vh-80px)] bg-[#f7f8fa] text-[#17233d]">
       <section className="border-b border-[#e7eaf0] bg-white">
-        <div className="container py-8 sm:py-10">
+        <div className="container py-6 sm:py-10">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="font-mulish text-3xl font-bold tracking-[-0.02em] sm:text-4xl">Keep going, {firstName}.</h1>
-              <p className="mt-2 max-w-xl text-base leading-7 text-[#687286]">
-                Build your maritime career one focused lesson at a time.
-              </p>
             </div>
             {!hasCompleteCourse && (
               <Link href="/dashboard/explore" className={`${btnOutline} w-fit`}>
@@ -90,7 +87,7 @@ const DashboardPage = async () => {
             )}
           </div>
 
-          <dl className="mt-8 grid grid-cols-3 divide-x divide-[#e7eaf0] rounded-xl border border-[#e7eaf0] bg-[#fbfbfd]">
+          <dl className="mt-6 grid grid-cols-3 divide-x divide-[#e7eaf0] rounded-xl border border-[#e7eaf0] bg-[#fbfbfd] sm:mt-8">
             {stats.map((stat) => (
               <div key={stat.label} className="px-4 py-4 sm:px-6 sm:py-5">
                 <dd className="font-mulish text-2xl font-bold sm:text-3xl">{stat.value}</dd>
@@ -101,13 +98,13 @@ const DashboardPage = async () => {
         </div>
       </section>
 
-      <div className="container space-y-12 py-8 sm:py-12">
+      <div className="container space-y-8 py-6 sm:space-y-12 sm:py-12">
         {activeEnrollment ? (
           <section className="overflow-hidden rounded-xl bg-[#17233d] text-white shadow-[0_18px_45px_rgba(23,35,61,0.16)]">
             <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="flex flex-col p-7 sm:p-10">
-                <p className="text-sm font-bold text-[#f0b429]">{courseDone ? "Course complete" : "Continue learning"}</p>
-                <h2 className="mt-3 font-mulish text-3xl font-bold sm:text-4xl">{activeEnrollment.course.title}</h2>
+              <div className="flex flex-col p-5 sm:p-10">
+                {courseDone && <p className="text-sm font-bold text-[#f0b429]">Course complete</p>}
+                <h2 className={`${courseDone ? "mt-3" : ""} font-mulish text-2xl font-bold sm:text-4xl`}>{activeEnrollment.course.title}</h2>
                 <p className="mt-2 text-sm text-[#b8c3d5]">
                   {active.total
                     ? `${active.done} of ${active.total} lessons complete`
@@ -116,7 +113,7 @@ const DashboardPage = async () => {
                       : "Your lessons are being added"}
                 </p>
 
-                <div className="mt-8">
+                <div className="mt-6 sm:mt-8">
                   <div className="flex items-center justify-between text-xs font-bold text-[#d9e0eb]">
                     <span>Course progress</span>
                     <span>{active.percent}%</span>
@@ -139,7 +136,7 @@ const DashboardPage = async () => {
               </div>
 
               {/* Module-by-module progress: 4 modules, starting from the current one */}
-              <div className="border-t border-white/10 bg-[linear-gradient(135deg,#283b61,#1b2946)] p-7 sm:p-10 lg:border-t-0 lg:border-l">
+              <div className="border-t border-white/10 bg-[linear-gradient(135deg,#283b61,#1b2946)] p-5 sm:p-10 lg:border-t-0 lg:border-l">
                 <div className="flex items-baseline justify-between gap-4">
                   <h3 className="text-sm font-bold text-[#d9e0eb]">Your modules</h3>
                   {modules.length > MODULE_WINDOW && (
@@ -196,7 +193,7 @@ const DashboardPage = async () => {
             </div>
           </section>
         ) : (
-          <section className="rounded-xl border border-dashed border-[#cfd5df] bg-white p-8 sm:p-12">
+          <section className="rounded-xl border border-dashed border-[#cfd5df] bg-white p-5 sm:p-12">
             <h2 className="font-mulish text-3xl font-bold">Choose your first course</h2>
             <p className="mt-3 max-w-xl leading-7 text-[#687286]">
               Your enrolled courses and progress will appear here after you select a programme.
@@ -241,7 +238,7 @@ const DashboardPage = async () => {
                 return (
                   <li
                     key={enrollment.id}
-                    className="flex flex-col gap-5 rounded-xl border border-[#e3e6ec] bg-white p-5 transition hover:border-[#b5a5f5] sm:flex-row sm:items-center sm:gap-6"
+                    className="flex flex-col gap-4 rounded-xl border border-[#e3e6ec] bg-white p-4 transition hover:border-[#b5a5f5] sm:flex-row sm:items-center sm:gap-6 sm:p-5"
                   >
                     <div
                       className="flex size-16 shrink-0 items-center justify-center rounded-full"
