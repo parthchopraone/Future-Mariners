@@ -40,7 +40,6 @@ const Hero = () => (
           <div className="absolute right-8 bottom-0 h-55 w-[48%] -rotate-[4deg] rounded-2xl border-4 border-white bg-white p-1 shadow-2xl">
             <Image src="/images/hero/img-3.png" alt="Future mariner preparation" fill sizes="(max-width: 1024px) 36vw, 240px" className="rounded-xl object-cover" />
           </div>
-          <div className="absolute bottom-8 left-12 rounded-full border border-[#e4aa3b]/50 bg-[#102c63]/90 px-5 py-3 text-xs font-bold tracking-[0.16em] text-[#e4aa3b] uppercase shadow-xl">Learn. Practice. Get selected.</div>
         </div>
         <div className="relative mt-2 grid grid-cols-2 gap-3 sm:hidden">
           {["img-1.png", "img-2.png"].map((image, index) => <div key={image} className={`relative h-40 rounded-xl border-4 border-white bg-white p-1 shadow-xl ${index === 0 ? "-rotate-3" : "rotate-3"}`}><Image src={`/images/hero/${image}`} alt="Future mariner preparation" fill sizes="45vw" className="rounded-lg object-cover" /></div>)}
