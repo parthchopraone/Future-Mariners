@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BackLink from "@/components/ui/backLink";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { coursesData } from "@/components/courses/courseData";
@@ -21,7 +22,7 @@ const ExplorePage = async () => {
     <main className="min-h-[calc(100vh-80px)] bg-[#f3f6f8] text-[#102c63]">
       <section className="border-b border-[#dfe6ed] bg-white">
         <div className="container py-10 sm:py-14">
-          <Link href="/dashboard" className="text-sm font-bold text-[#bd8014]">← Back to dashboard</Link>
+          <BackLink href="/dashboard">Back to dashboard</BackLink>
           <p className="mt-8 text-xs font-bold tracking-[0.2em] text-[#bd8014] uppercase">Explore more learning</p>
           <h1 className="mt-3 max-w-2xl font-mulish text-4xl font-bold leading-tight sm:text-5xl">Choose your next course.</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[#526176]">{isUpgrade ? "Upgrade to the complete IMUCET and Sponsorship preparation course." : "Browse courses you have not purchased yet and find the right next step for your maritime career."}</p>
@@ -48,7 +49,7 @@ const ExplorePage = async () => {
             <p className="text-xs font-bold tracking-[0.18em] text-[#bd8014] uppercase">You are all caught up</p>
             <h2 className="mt-3 font-mulish text-3xl font-bold">You have purchased every course.</h2>
             <p className="mt-3 max-w-xl leading-7 text-[#526176]">Your purchased courses are available from your dashboard whenever you are ready to continue learning.</p>
-            <Link href="/dashboard" className="mt-6 inline-flex rounded-md bg-[#102c63] px-5 py-3 text-sm font-bold text-white">Back to dashboard <span className="ml-3 text-[#e4aa3b]">→</span></Link>
+            <BackLink href="/dashboard" className="mt-6">Back to dashboard</BackLink>
           </section>
         )}
       </section>

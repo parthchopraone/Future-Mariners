@@ -4,13 +4,13 @@ import { MenuType } from ".";
 import Link from "next/link";
 import {
   ArrowLeft,
-  ArrowRight,
   CloseIcon,
   MenuIcon,
   PlusIcon,
 } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import Button from "../ui/button";
+import ButtonArrow from "../ui/buttonArrow";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
@@ -53,7 +53,7 @@ const MobileNavigation = ({ data, isAuthenticated }: { data: MenuType[]; isAuthe
       ></div>
       <nav
         className={cn(
-          "fixed top-0 z-999 flex h-full min-h-screen w-full max-w-85 flex-col justify-between overflow-y-auto bg-primary px-3 pt-7 pb-3 shadow-lg transition-all duration-500",
+          "fixed top-0 z-999 flex h-screen w-full max-w-85 flex-col overflow-hidden bg-primary px-3 pt-7 pb-3 shadow-lg transition-all duration-500",
           navbarShow ? "right-0" : "-right-full",
         )}
       >
@@ -65,7 +65,7 @@ const MobileNavigation = ({ data, isAuthenticated }: { data: MenuType[]; isAuthe
           <CloseIcon />
         </button>
         {/* menu items */}
-        <ul className="flex flex-col">
+        <ul className="mt-5 flex flex-1 flex-col">
           {data.map(({ href, id, label, subMenu }) => {
             // Check if current path matches parent or any submenu item
             const isActive =
@@ -132,16 +132,15 @@ const MobileNavigation = ({ data, isAuthenticated }: { data: MenuType[]; isAuthe
           })}
         </ul>
 
-        {/* login and sign up button the button*/}
-        <Button asChild className="flex h-12 w-full justify-between gap-2.5 py-1.5 pr-1.5 pl-6 text-base tracking-base lg:hidden">
-          <Link href={isAuthenticated ? "/dashboard" : "/login"}>
-          {isAuthenticated ? "Dashboard" : "Login/ Sign up"}
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-purple-500">
-            <ArrowRight />
-          </span>
-          </Link>
-        </Button>
-        {isAuthenticated && <button type="button" onClick={() => signOut({ callbackUrl: "/login" })} className="mt-4 w-full px-5 py-3 text-left text-sm font-bold text-[#526176]">Log out</button>}
+        <div className="mt-auto">
+          <Button asChild className="flex h-12 w-full justify-between gap-2.5 py-1.5 pr-1.5 pl-6 text-base tracking-base lg:hidden">
+            <Link href={isAuthenticated ? "/dashboard" : "/login"}>
+              {isAuthenticated ? "Dashboard" : "Login/ Sign up"}
+              <ButtonArrow />
+            </Link>
+          </Button>
+          {isAuthenticated && <button type="button" onClick={() => signOut({ callbackUrl: "/login" })} className="mt-4 w-full px-5 py-3 text-left text-sm font-bold text-[#526176]">Log out</button>}
+        </div>
       </nav>
     </div>
   );

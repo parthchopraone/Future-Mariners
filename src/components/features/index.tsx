@@ -1,26 +1,50 @@
 import SectionTitle from "../sectionTitle";
-import Image from "next/image";
-import { featuresData } from "./featuresData";
+import {
+  AwardsIcon,
+  BookOpen,
+  Globe,
+  GraduationHatFill,
+  Message,
+  TargetIcon,
+} from "@/lib/icons";
+
+const reasonIcons = [
+  GraduationHatFill,
+  BookOpen,
+  Message,
+  TargetIcon,
+  Globe,
+  AwardsIcon,
+];
+
+const reasons = [
+  { title: "Structured Career Preparation", label: "A Clear Path to Your Goal", text: "Understand what it takes to pursue a Merchant Navy career with focused preparation for IMU-CET and sponsorship examinations.", mobileText: "Prepare for IMU-CET and sponsorship exams with a clear career path." },
+  { title: "Affordable Learning", label: "Quality Education Within Reach", text: "Access recorded lectures, study materials, practice questions, and learning support designed to make preparation more accessible.", mobileText: "Access lessons, study material, practice, and support at an affordable cost." },
+  { title: "Personalised Student Support", label: "Guidance Beyond the Classroom", text: "Get help with doubts, preparation strategies, and interview readiness so you can approach each stage with greater confidence.", mobileText: "Get help with doubts, strategy, and interview readiness." },
+  { title: "Practice for Real Opportunities", label: "Prepare with Confidence", text: "Build your knowledge, communication skills, and interview confidence through mock tests and mock interviews.", mobileText: "Build knowledge and confidence through mock tests and interviews." },
+  { title: "Flexible Online Learning", label: "Learn on Your Schedule", text: "Revisit recorded lessons and organise your preparation around your own schedule, wherever you are.", mobileText: "Revisit lessons and plan learning around your schedule." },
+  { title: "Your Maritime Journey Matters", label: "Focused on Your Future", text: "We aim to help aspiring mariners move forward with the knowledge, discipline, and confidence needed to pursue their career ambitions.", mobileText: "Develop the knowledge, discipline, and confidence for your maritime goals." },
+];
 
 const Features = () => {
   return (
-    <section className="bg-gray-950 py-16 sm:py-20 lg:py-28">
+    <section id="why-us" className="bg-gray-950 py-10 sm:py-20 lg:py-28">
       <div className="container">
         <SectionTitle
           className="flex flex-col items-center text-center"
           titleClassName="text-primary"
-          descriptionClass="text-gray-400"
-          subTitleClass="btn-gradient-border-black text-gray-400"
-          subTitle="Why Future Mariners"
-          description="Experience a disciplined preparation system designed to help you learn, practise, and move forward with confidence."
+          subTitleClass="btn-gradient-border-black max-h-none text-gray-400 [&_p]:text-sm sm:[&_p]:text-xl lg:[&_p]:text-2xl"
+          subTitle="Why choose Future Mariners Foundation?"
         >
-          The Smarter Way to Prepare
+          Your Dreams. Our Guidance. A Future at Sea.
         </SectionTitle>
-        <div className="grid gap-6 pt-11 sm:grid-cols-2 sm:pt-14 lg:grid-cols-3 lg:pt-16">
-          {featuresData.map((feature) => (
+        <div className="grid grid-cols-2 gap-3 pt-8 sm:gap-6 sm:pt-14 lg:grid-cols-3 lg:pt-16">
+          {reasons.map((reason, index) => {
+            const Icon = reasonIcons[index];
+            return (
             <div
-              key={feature.id}
-              className="rounded-3xl border border-[#202020] bg-[linear-gradient(180deg,_#222530_0%,_#131422_100%)] px-4 pt-6 pb-4"
+              key={reason.title}
+              className="rounded-2xl border border-[#202020] bg-[linear-gradient(180deg,#222530_0%,#131422_100%)] p-3 sm:rounded-3xl sm:p-6"
             >
               <div
                 style={{
@@ -29,32 +53,17 @@ const Features = () => {
                   borderRadius: "999px",
                   border: "0.75px solid transparent",
                 }}
-                className="flex h-12 w-12 items-center justify-center rounded-full"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-[#e4aa3b] sm:h-12 sm:w-12"
               >
-                {feature.icon}
+                <Icon />
               </div>
-              <div className="pt-8">
-                <h5 className="text-xl leading-7.5 font-semibold text-primary">
-                  {feature.title}
-                </h5>
-                <p className="mt-2 tracking-base text-gray-400">
-                  {feature.description}
-                </p>
-              </div>
-              <div className="pt-8">
-                <div className="rounded-2xl border-4 border-[#2A2C36]">
-                  <Image
-                    width={364}
-                    height={242}
-                    sizes="100vw"
-                    src={feature.thumbnail}
-                    alt="img"
-                    className="w-full rounded-2xl"
-                  />
-                </div>
-              </div>
+              <p className="mt-4 text-[9px] leading-3 font-bold tracking-[0.08em] text-gray-400 uppercase sm:mt-7 sm:text-xs sm:leading-normal sm:tracking-[0.14em]">{reason.label}</p>
+              <h5 className="mt-1.5 text-sm leading-5 font-semibold text-primary sm:mt-3 sm:text-xl sm:leading-7.5">{reason.title}</h5>
+              <p className="mt-1 text-[10px] leading-4 tracking-base text-gray-400 sm:hidden">{reason.mobileText}</p>
+              <p className="hidden sm:mt-2 sm:block sm:tracking-base sm:text-gray-400">{reason.text}</p>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

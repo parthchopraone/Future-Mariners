@@ -7,7 +7,7 @@ const embedHost = process.env.BUNNY_STREAM_CDN_HOSTNAME || "iframe.mediadelivery
 const API = "https://video.bunnycdn.com";
 
 export type BunnyVideo = { id: string; title: string; seconds: number };
-export type BunnyModule = { collectionId: string; title: string; videos: BunnyVideo[] };
+export type BunnyModule = { collectionId: string; title: string; section?: string; videos: BunnyVideo[] };
 
 // Signed embed URL. The token key stays on the server.
 export const getBunnyEmbedUrl = (videoId: string) => {

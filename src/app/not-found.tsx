@@ -1,7 +1,5 @@
-import Button from "@/components/ui/button";
-import ButtonArrow from "@/components/ui/buttonArrow";
+import BackLink from "@/components/ui/backLink";
 import Image from "next/image";
-import Link from "next/link";
 
 const NotFound = () => {
   return (
@@ -28,18 +26,7 @@ const NotFound = () => {
             <p className="mt-3 block text-sm leading-5 font-medium tracking-sm text-secondary">
               The page you’re trying to reach isn’t available right now.
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="mt-8 py-1.5 pr-6 pl-1.5 max-sm:w-full"
-            >
-              <Link href={"/"}>
-                <span className="rotate-180">
-                  <ButtonArrow />
-                </span>
-                <span className="w-full text-center">Back to Home</span>
-              </Link>
-            </Button>
+            <BackLink href="/">Back to Home</BackLink>
           </div>
         </div>
       </section>

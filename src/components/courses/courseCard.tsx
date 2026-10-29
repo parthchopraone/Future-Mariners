@@ -1,8 +1,9 @@
 "use client";
-import { ArrowRight, BookOpen, Clock, GraduationHat, Star } from "@/lib/icons";
+import { BookOpen, Clock, GraduationHat, Star } from "@/lib/icons";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "../ui/button";
+import ButtonArrow from "../ui/buttonArrow";
 import { CourseType } from "@/types/CourseType";
 import { calculateMinutes, formatViews } from "@/lib/utils";
 
@@ -75,16 +76,7 @@ const CourseCard = ({ course }: { course: CourseType }) => {
           >
             <Link href={`/courses/${course.slug.current}`}>
               Enroll Now
-              <span className="relative flex shrink-0 items-center justify-center overflow-hidden">
-                <span className="relative flex h-full w-full items-center justify-center">
-                  <span className="relative transition-transform duration-300 ease-in-out group-hover:translate-x-10">
-                    <ArrowRight className="size-5" />
-                  </span>
-                  <span className="absolute -translate-x-10 transition-transform duration-300 ease-in-out group-hover:translate-x-0">
-                    <ArrowRight className="size-5" />
-                  </span>
-                </span>
-              </span>
+              <ButtonArrow />
             </Link>
           </Button>
         </div>

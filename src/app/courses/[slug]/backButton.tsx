@@ -7,9 +7,9 @@ const BackButton = () => {
   return (
     <button
       onClick={() => router.back()}
-      className="inline-flex h-9 max-w-fit items-center justify-center gap-1 rounded-full border border-gray-200 py-2 pr-4 pl-2 font-medium tracking-sm text-[#6B7280] transition-all duration-500 hover:bg-gray-50"
+      className="group inline-flex min-h-11 max-w-fit items-center justify-center gap-2 rounded-full border border-[#d8e0e8] bg-white px-4 py-2 text-sm font-bold text-[#526176] shadow-xs transition-all hover:border-[#7D52F4] hover:text-[#102c63] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7D52F4] focus-visible:ring-offset-2"
     >
-      <ArrowLeft className="size-5"/>
+      <ArrowLeft className="size-4 transition-transform duration-300 group-hover:-translate-x-0.5" />
       Back
     </button>
   );

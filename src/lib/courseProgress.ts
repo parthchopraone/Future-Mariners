@@ -19,7 +19,12 @@ export const loadCourseModules = async (slug: string) => {
   const configured = courseModules[slug] ?? [];
   if (!configured.length || !hasBunnyApiKey()) return { modules: [] as BunnyModule[], loadError: false };
   try {
-    const modules = await Promise.all(configured.map((m) => getCollectionModule(m.collectionId, m.title)));
+    const modules = await Promise.all(
+      configured.map(async (m) => ({
+        ...(await getCollectionModule(m.collectionId, m.title)),
+        section: m.section,
+      })),
+    );
     return { modules, loadError: false };
   } catch {
     return { modules: [] as BunnyModule[], loadError: true };

@@ -32,8 +32,8 @@ const MarkComplete = ({ slug, videoId, completed }: { slug: string; videoId: str
         type="button"
         onClick={toggle}
         disabled={busy}
-        className={`px-5 py-2.5 text-sm font-bold transition disabled:opacity-60 ${
-          completed ? "border border-[#e4aa3b] text-[#e4aa3b]" : "bg-[#e4aa3b] text-[#0b1427]"
+        className={`inline-flex min-h-11 items-center rounded-xl px-4 py-2.5 text-sm font-bold shadow-sm transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e4aa3b] disabled:cursor-not-allowed disabled:opacity-60 ${
+          completed ? "border border-[#e4aa3b]/60 bg-[#e4aa3b]/10 text-[#f4c766] hover:bg-[#e4aa3b]/20" : "bg-[#e4aa3b] text-[#0b1427] hover:bg-[#f4c766]"
         }`}
       >
         {busy ? "Saving..." : completed ? "✓ Completed (undo)" : "Mark as complete"}

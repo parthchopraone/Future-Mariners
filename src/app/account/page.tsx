@@ -1,4 +1,4 @@
-import Link from "next/link";
+import BackLink from "@/components/ui/backLink";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
@@ -21,7 +21,7 @@ const AccountPage = async () => {
       <div className="container max-w-5xl">
         <div className="flex flex-col gap-4 border-b border-[#d8e0e8] pb-8 sm:flex-row sm:items-end sm:justify-between">
           <div><p className="text-sm font-bold tracking-[0.2em] text-[#bd8014] uppercase">Student account</p><h1 className="mt-3 font-mulish text-4xl font-bold">My account</h1><p className="mt-3 text-[#526176]">Manage your profile and view your course payment history.</p></div>
-          <Link href="/dashboard" className="text-sm font-bold text-[#102c63]">Back to dashboard →</Link>
+          <BackLink href="/dashboard">Back to dashboard</BackLink>
         </div>
         <div className="mt-8 grid gap-8 lg:grid-cols-2">
           <section className="bg-white p-7 shadow-[0_18px_50px_rgba(16,44,99,0.08)] sm:p-9"><h2 className="font-mulish text-2xl font-bold">Personal information</h2><dl className="mt-6 space-y-5 text-sm"><div><dt className="font-bold text-[#718096]">Full name</dt><dd className="mt-1">{user.name ?? "Not provided"}</dd></div><div><dt className="font-bold text-[#718096]">Email address</dt><dd className="mt-1">{user.email ?? "Not provided"}</dd></div><div><dt className="font-bold text-[#718096]">Phone number</dt><dd className="mt-1">{user.phone ?? "Not provided"}</dd></div><div><dt className="font-bold text-[#718096]">Member since</dt><dd className="mt-1">{user.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</dd></div></dl></section>
