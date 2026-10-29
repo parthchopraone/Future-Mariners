@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { coursesData } from "./courseData";
 import ButtonArrow from "../ui/buttonArrow";
+import LoadingLink from "../ui/loadingLink";
 
 const courseDetails = [
   {
@@ -40,7 +40,7 @@ const Courses = () => (
             </ul>
             <div className="mt-9 flex flex-wrap items-center justify-between gap-5 border-t border-[#e5eaf0] pt-6">
               <p className="font-mulish text-3xl font-bold text-[#102c63]">₹{course.price.toLocaleString("en-IN")} <span className="text-sm font-normal text-[#718096]">one-time</span></p>
-              <Link href={`/courses/${course.slug.current}`} className="group inline-flex h-11 items-center justify-center gap-2.5 whitespace-nowrap rounded-full border border-gray-200 bg-transparent px-6 py-3 text-base font-medium leading-5 tracking-base text-secondary shadow-xs transition-colors hover:bg-gray-50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:h-12">View course <ButtonArrow /></Link>
+              <LoadingLink href="/signup" className="group inline-flex h-11 items-center justify-center gap-2.5 whitespace-nowrap rounded-full border border-gray-200 bg-transparent px-6 py-3 text-base font-medium leading-5 tracking-base text-secondary shadow-xs transition-colors hover:bg-gray-50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:h-12">Sign up to enroll <ButtonArrow /></LoadingLink>
             </div>
           </article>
         ))}

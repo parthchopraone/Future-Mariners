@@ -1,6 +1,7 @@
 "use client";
 import Button from "../ui/button";
 import Link from "next/link";
+import LoadingLink from "../ui/loadingLink";
 import ButtonArrow from "../ui/buttonArrow";
 import { signOut } from "next-auth/react";
 
@@ -15,10 +16,10 @@ const HeaderExtraInfo = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
         asChild
         className="hidden h-12 justify-between gap-2.5 py-1.5 pr-1.5 pl-6 text-base tracking-base lg:flex"
       >
-        <Link href={"/login"}>
+        <LoadingLink href="/login">
           Student sign in
           <ButtonArrow />
-        </Link>
+        </LoadingLink>
       </Button>
     </div>
   );

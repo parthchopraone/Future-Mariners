@@ -153,6 +153,13 @@
 
 body {
   @apply bg-background font-inter-tight text-foreground;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+html {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 button {

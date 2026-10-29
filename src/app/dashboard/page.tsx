@@ -17,7 +17,8 @@ const Arrow = () => <span aria-hidden className="ml-2">→</span>;
 const actionCard = "flex items-center gap-3 rounded-xl px-4 py-4 text-sm font-bold text-white shadow-sm transition sm:gap-4 sm:px-6 sm:py-5 sm:text-base";
 
 // How many modules to show in the dashboard panel.
-const MODULE_WINDOW = 2;
+const MODULE_WINDOW_DESKTOP = 4;
+const MODULE_WINDOW_MOBILE = 2;
 
 const emptyProgress: CourseProgress = {
   modules: [], total: 0, done: 0, percent: 0, completedIds: new Set(), nextVideo: null, loadError: false,
@@ -62,17 +63,56 @@ const DashboardPage = async () => {
     : "/dashboard";
   const courseDone = active.total > 0 && active.percent === 100;
 
-  // Show only 4 modules, starting from the one the student is on.
-  // If they are on one of the last modules, show the last 4.
+  // Keep the active module in view while limiting the dashboard preview by viewport.
   const modules = active.modules;
   const currentIdx = active.nextVideo
     ? modules.findIndex((m) => m.videos.some((v) => v.id === active.nextVideo?.id))
     : modules.length - 1;
-  const windowStart = Math.max(0, Math.min(currentIdx, modules.length - MODULE_WINDOW));
-  const visibleModules = modules.slice(windowStart, windowStart + MODULE_WINDOW);
+  const getWindowStart = (windowSize: number) => Math.max(0, Math.min(currentIdx, modules.length - windowSize));
+  const desktopWindowStart = getWindowStart(MODULE_WINDOW_DESKTOP);
+  const mobileWindowStart = getWindowStart(MODULE_WINDOW_MOBILE);
+  const desktopModules = modules.slice(desktopWindowStart, desktopWindowStart + MODULE_WINDOW_DESKTOP);
+  const mobileModules = modules.slice(mobileWindowStart, mobileWindowStart + MODULE_WINDOW_MOBILE);
+
+  const renderModuleList = (visibleModules: typeof modules, windowStart: number) => (
+    <ol className="mt-4 space-y-2">
+      {visibleModules.map((m, i) => {
+        const index = windowStart + i;
+        const hasVideos = m.videos.length > 0;
+        const complete = hasVideos && m.done === m.videos.length;
+        const isCurrent = index === currentIdx && !courseDone;
+        const pct = hasVideos ? Math.round((m.done / m.videos.length) * 100) : 0;
+        return (
+          <li
+            key={m.collectionId}
+            className={`min-w-0 rounded-lg px-4 py-3 text-sm ${isCurrent ? "bg-white/12 ring-1 ring-[#f0b429]/60" : "bg-white/5"}`}
+          >
+            <div className="flex min-w-0 flex-wrap items-center gap-3">
+              <span
+                className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                  complete ? "bg-[#f0b429] text-[#17233d]" : isCurrent ? "border border-[#f0b429] text-[#f0b429]" : "border border-white/25 text-white/50"
+                }`}
+              >
+                {complete ? "✓" : index + 1}
+              </span>
+              <span className={`min-w-0 flex-1 wrap-break-word ${hasVideos ? "text-white" : "text-[#b8c3d5]"}`}>{m.title}</span>
+              <span className="shrink-0 text-xs text-[#b8c3d5] max-[340px]:basis-full max-[340px]:pl-9">
+                {hasVideos ? `${m.done}/${m.videos.length}` : "Coming soon"}
+              </span>
+            </div>
+            {hasVideos && (
+              <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/15">
+                <div className="h-full rounded-full bg-[#f0b429]" style={{ width: `${pct}%` }} />
+              </div>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
 
   return (
-    <main className="min-h-[calc(100vh-80px)] bg-[#f7f8fa] text-[#17233d]">
+    <main className="min-w-0 min-h-[calc(100vh-80px)] overflow-x-clip bg-[#f7f8fa] text-[#17233d]">
       <section className="border-b border-[#e7eaf0] bg-white">
         <div className="container py-6 sm:py-10">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -89,9 +129,9 @@ const DashboardPage = async () => {
 
           <dl className="mt-6 grid grid-cols-3 divide-x divide-[#e7eaf0] rounded-xl border border-[#e7eaf0] bg-[#fbfbfd] sm:mt-8">
             {stats.map((stat) => (
-              <div key={stat.label} className="px-4 py-4 sm:px-6 sm:py-5">
+              <div key={stat.label} className="min-w-0 px-3 py-4 sm:px-6 sm:py-5">
                 <dd className="font-mulish text-2xl font-bold sm:text-3xl">{stat.value}</dd>
-                <dt className="mt-1 text-xs text-[#687286] sm:text-sm">{stat.label}</dt>
+                <dt className="mt-1 wrap-break-word text-xs text-[#687286] sm:text-sm">{stat.label}</dt>
               </div>
             ))}
           </dl>
@@ -100,11 +140,11 @@ const DashboardPage = async () => {
 
       <div className="container space-y-8 py-6 sm:space-y-12 sm:py-12">
         {activeEnrollment ? (
-          <section className="overflow-hidden rounded-xl bg-[#17233d] text-white shadow-[0_18px_45px_rgba(23,35,61,0.16)]">
+          <section className="min-w-0 overflow-hidden rounded-xl bg-[#17233d] text-white shadow-[0_18px_45px_rgba(23,35,61,0.16)]">
             <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="flex flex-col p-5 sm:p-10">
+              <div className="min-w-0 flex flex-col p-5 sm:p-10">
                 {courseDone && <p className="text-sm font-bold text-[#f0b429]">Course complete</p>}
-                <h2 className={`${courseDone ? "mt-3" : ""} font-mulish text-2xl font-bold sm:text-4xl`}>{activeEnrollment.course.title}</h2>
+                <h2 className={`${courseDone ? "mt-3" : ""} wrap-break-word font-mulish text-2xl font-bold sm:text-4xl`}>{activeEnrollment.course.title}</h2>
                 <p className="mt-2 text-sm text-[#b8c3d5]">
                   {active.total
                     ? `${active.done} of ${active.total} lessons complete`
@@ -124,7 +164,7 @@ const DashboardPage = async () => {
                 </div>
 
                 {active.nextVideo && (
-                  <p className="mt-6 text-sm text-[#b8c3d5]">
+                  <p className="mt-6 min-w-0 wrap-break-word text-sm text-[#b8c3d5]">
                     {startedAnything ? "Up next" : "Start with"}: <span className="font-bold text-white">{active.nextVideo.title}</span>
                   </p>
                 )}
@@ -135,59 +175,24 @@ const DashboardPage = async () => {
                 </Link>
               </div>
 
-              {/* Module-by-module progress: 4 modules, starting from the current one */}
-              <div className="border-t border-white/10 bg-[linear-gradient(135deg,#283b61,#1b2946)] p-5 sm:p-10 lg:border-t-0 lg:border-l">
+              {/* Module-by-module progress, limited by viewport size. */}
+              <div className="min-w-0 border-t border-white/10 bg-[linear-gradient(135deg,#283b61,#1b2946)] p-5 sm:p-10 lg:border-t-0 lg:border-l">
                 <div className="flex items-baseline justify-between gap-4">
                   <h3 className="text-sm font-bold text-[#d9e0eb]">Your modules</h3>
-                  {modules.length > MODULE_WINDOW && (
-                    <span className="text-xs text-[#b8c3d5]">
-                      {windowStart + 1}–{windowStart + visibleModules.length} of {modules.length}
-                    </span>
-                  )}
+                  {modules.length > MODULE_WINDOW_MOBILE && <span className="text-xs text-[#b8c3d5] lg:hidden">{mobileWindowStart + 1}–{mobileWindowStart + mobileModules.length} of {modules.length}</span>}
+                  {modules.length > MODULE_WINDOW_DESKTOP && <span className="hidden text-xs text-[#b8c3d5] lg:inline">{desktopWindowStart + 1}–{desktopWindowStart + desktopModules.length} of {modules.length}</span>}
                 </div>
 
-                {visibleModules.length ? (
-                  <>
-                    <ol className="mt-4 space-y-2">
-                      {visibleModules.map((m, i) => {
-                        const index = windowStart + i;
-                        const hasVideos = m.videos.length > 0;
-                        const complete = hasVideos && m.done === m.videos.length;
-                        const isCurrent = index === currentIdx && !courseDone;
-                        const pct = hasVideos ? Math.round((m.done / m.videos.length) * 100) : 0;
-                        return (
-                          <li
-                            key={m.collectionId}
-                            className={`rounded-lg px-4 py-3 text-sm ${isCurrent ? "bg-white/12 ring-1 ring-[#f0b429]/60" : "bg-white/5"}`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <span
-                                className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                                  complete ? "bg-[#f0b429] text-[#17233d]" : isCurrent ? "border border-[#f0b429] text-[#f0b429]" : "border border-white/25 text-white/50"
-                                }`}
-                              >
-                                {complete ? "✓" : index + 1}
-                              </span>
-                              <span className={`min-w-0 flex-1 truncate ${hasVideos ? "text-white" : "text-[#b8c3d5]"}`}>{m.title}</span>
-                              <span className="shrink-0 text-xs text-[#b8c3d5]">{hasVideos ? `${m.done}/${m.videos.length}` : "Coming soon"}</span>
-                            </div>
-                            {hasVideos && (
-                              <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/15">
-                                <div className="h-full rounded-full bg-[#f0b429]" style={{ width: `${pct}%` }} />
-                              </div>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ol>
-                    {modules.length > MODULE_WINDOW && (
-                      <Link href={`/learn/${activeEnrollment.course.slug}`} className="mt-4 inline-block text-xs font-bold text-[#f0b429] hover:underline">
-                        View all {modules.length} modules →
-                      </Link>
-                    )}
-                  </>
-                ) : (
-                  <p className="mt-4 text-sm leading-6 text-[#b8c3d5]">Modules for this course will appear here soon.</p>
+                <div className="lg:hidden">
+                  {mobileModules.length ? renderModuleList(mobileModules, mobileWindowStart) : <p className="mt-4 text-sm leading-6 text-[#b8c3d5]">Modules for this course will appear here soon.</p>}
+                </div>
+                <div className="hidden lg:block">
+                  {desktopModules.length ? renderModuleList(desktopModules, desktopWindowStart) : <p className="mt-4 text-sm leading-6 text-[#b8c3d5]">Modules for this course will appear here soon.</p>}
+                </div>
+                {modules.length > MODULE_WINDOW_MOBILE && (
+                  <Link href={`/learn/${activeEnrollment.course.slug}`} className="mt-4 inline-block max-w-full wrap-break-word text-xs font-bold text-[#f0b429] hover:underline">
+                    View all {modules.length} modules →
+                  </Link>
                 )}
               </div>
             </div>

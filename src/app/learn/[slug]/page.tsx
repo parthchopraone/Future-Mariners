@@ -7,6 +7,8 @@ import { getBunnyEmbedUrl } from "@/lib/bunny";
 import { getCourseProgress } from "@/lib/courseProgress";
 import MarkComplete from "../markComplete";
 import BackLink from "@/components/ui/backLink";
+import LoadingLink from "@/components/ui/loadingLink";
+import { ArrowRight } from "@/lib/icons";
 
 const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
@@ -102,12 +104,16 @@ const LearnPage = async ({
                     </Link>
                   )}
                   {next && (
-                    <Link
+                    <LoadingLink
+                      key={`${next.id}-${current.id}`}
                       href={href(next.id)}
+                      prefetch
+                      loadingText={<><span className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />Loading...</>}
                       className="group inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#7D52F4] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#7D52F4]/20 transition hover:-translate-y-0.5 hover:bg-[#6d43e8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e4aa3b]"
                     >
-                      Next lesson
-                    </Link>
+                      <span>Next lesson</span>
+                      <ArrowRight className="size-4" />
+                    </LoadingLink>
                   )}
                 </div>
               </div>
@@ -168,9 +174,10 @@ const LearnPage = async ({
                               {m.videos.map((video) => {
                                 const isDone = completedIds.has(video.id);
                                 return (
-                                  <Link
-                                    key={video.id}
+                                  <LoadingLink
+                                    key={`${video.id}-${current?.id ?? ""}`}
                                     href={href(video.id)}
+                                    loadingText={<><span className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />Loading...</>}
                                     className={`flex items-center gap-3 rounded-xl p-3 text-sm transition ${video.id === current?.id ? "bg-[#1d2c49] text-white ring-1 ring-[#7D52F4]" : "text-[#b8c7dc] hover:bg-white/5"}`}
                                   >
                                     <span className={`flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${isDone ? "bg-[#e4aa3b] text-[#0b1427]" : "border border-white/30"}`}>
@@ -178,7 +185,7 @@ const LearnPage = async ({
                                     </span>
                                     <span className="min-w-0 flex-1 truncate">{video.title}</span>
                                     <span className="shrink-0 text-xs text-[#8fa3bf]">{formatTime(video.seconds)}</span>
-                                  </Link>
+                                  </LoadingLink>
                                 );
                               })}
                             </div>
