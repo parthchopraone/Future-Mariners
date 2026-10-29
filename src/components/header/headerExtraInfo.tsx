@@ -4,8 +4,11 @@ import Link from "next/link";
 import LoadingLink from "../ui/loadingLink";
 import ButtonArrow from "../ui/buttonArrow";
 import { signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 const HeaderExtraInfo = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
+  const pathName = usePathname();
+
   if (isAuthenticated) {
     return <div className="flex items-center gap-x-4"><Button asChild className="hidden h-12 justify-between gap-2.5 py-1.5 pr-1.5 pl-6 text-base tracking-base lg:flex"><Link href="/account">My account <ButtonArrow /></Link></Button><button type="button" onClick={() => signOut({ callbackUrl: "/login" })} className="hidden text-sm font-bold text-[#526176] transition hover:text-[#7d52f4] lg:block">Log out</button></div>;
   }
@@ -16,7 +19,7 @@ const HeaderExtraInfo = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
         asChild
         className="hidden h-12 justify-between gap-2.5 py-1.5 pr-1.5 pl-6 text-base tracking-base lg:flex"
       >
-        <LoadingLink href="/login">
+        <LoadingLink key={pathName} href="/login">
           Student sign in
           <ButtonArrow />
         </LoadingLink>

@@ -159,6 +159,7 @@ const MobileNavigation = ({ data, isAuthenticated }: { data: MenuType[]; isAuthe
 
         <div className={cn(isAuthenticated ? "mt-5" : "mt-auto")}>
           <LoadingLink
+            key={pathName}
             href={isAuthenticated ? "/dashboard" : "/login"}
             onClick={closeNavigation}
             loadingText="Loading..."
