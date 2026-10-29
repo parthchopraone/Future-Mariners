@@ -17,7 +17,7 @@ const Arrow = () => <span aria-hidden className="ml-2">→</span>;
 const actionCard = "flex items-center gap-3 rounded-xl px-4 py-4 text-sm font-bold text-white shadow-sm transition sm:gap-4 sm:px-6 sm:py-5 sm:text-base";
 
 // How many modules to show in the dashboard panel.
-const MODULE_WINDOW = 4;
+const MODULE_WINDOW = 2;
 
 const emptyProgress: CourseProgress = {
   modules: [], total: 0, done: 0, percent: 0, completedIds: new Set(), nextVideo: null, loadError: false,
