@@ -227,6 +227,11 @@ const DashboardPage = async () => {
               <span>Submit a doubt</span>
               <span aria-hidden className="ml-auto">→</span>
             </Link>
+            <Link href="/dashboard/notes/imucet" className={`${actionCard} bg-[#7d52f4] hover:bg-[#936ff7]`}>
+              <span className="flex size-7 items-center justify-center rounded-lg border-2 border-white text-xs font-bold">PDF</span>
+              <span>IMUCET study notes</span>
+              <span aria-hidden className="ml-auto">→</span>
+            </Link>
           </section>
         )}
 
@@ -261,10 +266,15 @@ const DashboardPage = async () => {
                     </div>
 
                     {isPaid ? (
-                      <Link href={href} className={`${btnPrimary} w-full sm:w-auto`}>
-                        {p.total && p.percent === 100 ? "Review" : p.done ? "Continue" : "Start"}
-                        <Arrow />
-                      </Link>
+                      <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                        <Link href={`/dashboard/notes/${enrollment.course.slug === "complete-imucet-preparation" ? "imucet" : "sponsorship"}`} className={`${btnOutline} w-full sm:w-auto`}>
+                          Notes
+                        </Link>
+                        <Link href={href} className={`${btnPrimary} w-full sm:w-auto`}>
+                          {p.total && p.percent === 100 ? "Review" : p.done ? "Continue" : "Start"}
+                          <Arrow />
+                        </Link>
+                      </div>
                     ) : (
                       <Link href={`/checkout?course=${enrollment.course.slug}`} className={`${btnPending} w-full sm:w-auto`}>
                         Complete payment
