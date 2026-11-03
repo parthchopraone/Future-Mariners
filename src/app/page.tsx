@@ -59,7 +59,7 @@ const Home = async () => {
           <div className="mt-10 divide-y divide-[#d8e0e8] border-y border-[#d8e0e8]">{[
             { q: "Are the classes live or recorded?", a: "Our courses include recorded lectures that students can access at their convenience. Live guidance sessions may also be conducted through Google Meet, with additional support through our WhatsApp group." },
             { q: "How long will I have access to the course?", a: "Course access and study materials will remain available until IMU-CET 2027, as specified in your course enrolment details." },
-            { q: "Can I enrol only for Sponsorship Preparation?", a: "Yes! You can enrol in our standalone Sponsorship Preparation course if you need focused guidance for sponsorship examinations and interviews." },
+            { q: "Can I enroll only for Sponsorship Preparation?", a: "Yes! You can enrol in our standalone Sponsorship Preparation course if you need focused guidance for sponsorship examinations and interviews." },
             { q: "Does FMF provide interview preparation?", a: "Yes. Our preparation includes mock interviews, communication skills, personality development, and guidance to help you approach sponsorship interviews with confidence." },
             { q: "Will I receive study materials and practice questions?", a: "Yes. Our learning resources are designed to support your preparation through study materials, practice questions, and revision." },
             { q: "How can I ask questions if I have doubts?", a: "Students can seek support through the designated Future Mariners Foundation WhatsApp group and scheduled guidance sessions." },
